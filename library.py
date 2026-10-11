@@ -9,6 +9,8 @@ class Library:
             print('This volume belongs to another library')
         elif volume in self.collection:
             print('This volume is already in the library\'s collection.')
+        elif volume.borrowed:
+            print('It\'s not possible to add a borrowed volume to the library\'s collection')
         else:
             self.collection.append(volume)
 
@@ -41,7 +43,7 @@ class User:
 
     def borrow_volume(self, volume):
         if volume not in volume.library.collection:
-            print('Volume not avaiable at {volume.library}')
+            print(f'Volume not available at {volume.library.name}')
         elif volume.borrowed:
             print('Volume is already borrowed.')
         else:
@@ -57,10 +59,10 @@ class User:
 
     def list_borrowed_volumes(self):
         if self.borrowed_volumes:
-            print(f'Borrowed volumes by {self.nome}:')
+            print(f'Borrowed volumes by {self.name}:')
             print(f'{"Number":<10}{"Title":<30}{"Author":<20}{"ISBN":<15}{"Library":<20}')
-            for volume in self.livros_emprestados:
+            for volume in self.borrowed_volumes:
                 print(f'{volume.number:<10}{volume.book.title:<30}{volume.book.author:<20}{volume.book.isbn:<15}{volume.library.name:<20}')
         else:
-            print(f'{self.nome} has no borrowed books.')
+            print(f'{self.name} has no borrowed books.')
     
