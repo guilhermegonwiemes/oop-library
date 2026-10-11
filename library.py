@@ -15,12 +15,39 @@ class Library:
             self.collection.append(volume)
 
     def remove_volume(self, volume):
-        if volume.borrowed:
-            print('It\'s not possible to remove a borrowed volume')
+        if volume.library is not self:
+            print('This volume belongs to another library')
         elif volume not in self.collection:
             print('Volume not found in the library\'s collection')
+        elif volume.borrowed:
+            print('It\'s not possible to remove a borrowed volume')
         else:
             self.collection.remove(volume)
+
+    def _display_volumes(self, volumes, empty_message='No volumes found.'):
+        if not volumes:
+            print(empty_message)
+            return
+        print(f'Volumes in {self.name}:')
+        print(f'{"Number":<10}{"Title":<30}{"Author":<20}{"ISBN":<15}{"Status":<10}')
+        for volume in volumes:
+            status = 'Borrowed' if volume.borrowed else 'Available'
+            print(f'{volume.number:<10}{volume.book.title:<30}{volume.book.author:<20}{volume.book.isbn:<15}{status:<10}')
+        
+    def search_volume(self, title):
+        volumes_found = [volume for volume in self.collection if title.lower() in volume.book.title.lower()]
+        self._display_volumes(volumes_found, empty_message='No volumes found with the given title.')
+
+    def search_author(self, author):
+        volumes_found = [volume for volume in self.collection if author.lower() in volume.book.author.lower()]
+        self._display_volumes(volumes_found, empty_message='No volumes found by the given author.')
+
+    def list_volumes(self):
+        self._display_volumes(self.collection, empty_message='No volumes in the library\'s collection.')
+
+    def list_available_volumes(self):
+        available_volumes = [volume for volume in self.collection if not volume.borrowed]
+        self._display_volumes(available_volumes, empty_message='No available volumes in the library\'s collection.')
 
 class Book:
     def __init__(self, title, author, isbn):
@@ -65,4 +92,3 @@ class User:
                 print(f'{volume.number:<10}{volume.book.title:<30}{volume.book.author:<20}{volume.book.isbn:<15}{volume.library.name:<20}')
         else:
             print(f'{self.name} has no borrowed books.')
-    
